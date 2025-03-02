@@ -81,16 +81,16 @@ def obtener_vector_documento(token_list, model):
 X = np.array([obtener_vector_documento(token_list, model_w2v) for token_list in tokens])
 y = np.array(etiquetas)
 
-# Convertir las etiquetas a formato one-hot para la red neuronal
+
 num_classes = len(set(etiquetas))
 y_categorical = to_categorical(y, num_classes=num_classes)
 
-# Dividir en conjuntos de entrenamiento y prueba
+
 X_train, X_test, y_train, y_test = train_test_split(
     X, y_categorical, test_size=0.25, random_state=42
 )
 
-# Construir una arquitectura de red neuronal más simple
+
 model_nn = Sequential(
     [
         Input(shape=(vector_size,)),
@@ -107,17 +107,17 @@ model_nn.compile(
 )
 model_nn.summary()
 
-# Usar EarlyStopping para detener el entrenamiento si no hay mejora
+
 early_stop = EarlyStopping(monitor="val_loss", patience=5, restore_best_weights=True)
 log_dir = "logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 tensorboard_callback = TensorBoard(log_dir=log_dir, histogram_freq=1)
 
-# Entrena tu modelo incluyendo el callback de TensorBoard
+
 history = model_nn.fit(
     X_train, y_train, epochs=10, validation_split=0.2, callbacks=[tensorboard_callback]
 )
 
 
-# Evaluar el modelo en el conjunto de prueba
+
 loss, accuracy = model_nn.evaluate(X_test, y_test, verbose=0)
 print(f"\nAccuracy en el conjunto de prueba: {accuracy:.2f}")
